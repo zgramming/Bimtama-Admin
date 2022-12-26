@@ -23,6 +23,7 @@ const LoginPage = () => {
           password,
         }
       );
+      
       const { data, token, message, success } = dataResponse;
 
       if (!success) {

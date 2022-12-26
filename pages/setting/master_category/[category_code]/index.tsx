@@ -1,18 +1,30 @@
 import {
-    Button, Card, Col, Form, Input, Modal, notification, Radio, Row, Select, Space, Spin, Table,
-    TableColumnsType
-} from 'antd';
-import Search from 'antd/lib/input/Search';
-import TextArea from 'antd/lib/input/TextArea';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Radio,
+  Row,
+  Select,
+  Space,
+  Spin,
+  Table,
+  TableColumnsType,
+} from "antd";
+import Search from "antd/lib/input/Search";
+import TextArea from "antd/lib/input/TextArea";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { MasterData } from '../../../../interface/main_interface';
-import { convertObjectIntoQueryParams } from '../../../../utils/function';
+import { MasterData } from "../../../../interface/main_interface";
+import { convertObjectIntoQueryParams } from "../../../../utils/function";
 
 interface DataSourceInterface {
   no: number;
@@ -27,7 +39,7 @@ interface DataSourceInterface {
 
 const ApiURL = `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/master_data`;
 
-const masterDataFetcher = async ([url, params]:any) => {
+const masterDataFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: MasterData[]; success: boolean } =
