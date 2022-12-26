@@ -37,11 +37,12 @@ const LoginPage = () => {
       setCookie(null, keyLocalStorageLogin, token);
       replace("/");
     } catch (e: any) {
-
       let message = e?.message;
+
       if (axios.isAxiosError(e)) {
         message = e.message;
       }
+
       notification.error({
         duration: 0,
         message: "Error",
