@@ -34,13 +34,28 @@ const accessibleMenuFetcher = async ([url, route]: any) => {
   return data;
 };
 
-const currentPathHandler = (path: string): string => {
+const currentPathHandler = (
+  path: string
+): { route: string; parentRoute?: string } => {
   const [first, second, third] = path
     .split("/")
     .filter((route) => route.length !== 0);
 
   /// We assume when `third` is undefined, this is sub menu
-  return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
+  if (!third) {
+    const route = `/${first}/${second}`;
+    return {
+      route,
+      parentRoute: undefined,
+    };
+  } else {
+    const route = `/${first}/${second}/${third}`;
+    const parentRoute = `?/${first}/${second}`;
+    return {
+      route,
+      parentRoute,
+    };
+  }
 };
 
 const ProfileLogin = () => {
@@ -154,46 +169,46 @@ const SiderMenu = (props: {}) => {
       }`,
       route,
     ],
-    accessibleMenuFetcher
-  );
+    accessibleMenuFetcher,
+    {
+      onSuccess(data, key, config) {
+        const mapping = data.map((menu, index) => {
+          /// Kondisi ketika menu punya parent
+          if (menu.app_menu.route.startsWith("?")) {
+            const children = menu.app_menu.menu_childrens.map((child) =>
+              getItem(child.route, child.name, <PieChartOutlined />)
+            );
 
-  useEffect(() => {
-    if (dataAccessibleMenu) {
-      const mapping = dataAccessibleMenu.map((menu, index) => {
-        /// Kondisi ketika menu punya parent
-        if (menu.app_menu.route.startsWith("?")) {
-          const children = menu.app_menu.menu_childrens.map((child) =>
-            getItem(child.route, child.name, <PieChartOutlined />)
-          );
+            const result = getItem(
+              menu.app_menu.route,
+              menu.app_menu.name,
+              <PieChartOutlined />,
+              children
+            );
 
-          const result = getItem(
-            menu.app_menu.route,
-            menu.app_menu.name,
-            <PieChartOutlined />,
-            children
-          );
-          return result;
-        } else {
-          /// Kondisi ketika menu tidak punya parent
+            return result;
+          } else {
+            /// Kondisi ketika menu tidak punya parent
 
-          /// Check apakah dalam kondisi ini, terdapat menu yang punya parent
-          /// Jika ada return null, karena asumsi kita menu ini hanya satu tingkat
-          if (menu.app_menu.app_menu_id_parent) return null;
-          return getItem(
-            menu.app_menu.route,
-            menu.app_menu.name,
-            <PieChartOutlined />
-          );
-        }
-      });
-      setItems(mapping);
+            /// Check apakah dalam kondisi ini, terdapat menu yang punya parent
+            /// Jika ada return null, karena asumsi kita menu ini hanya satu tingkat
+            if (menu.app_menu.app_menu_id_parent) return null;
+            return getItem(
+              menu.app_menu.route,
+              menu.app_menu.name,
+              <PieChartOutlined />
+            );
+          }
+        });
+        setItems(mapping);
+      },
     }
-    return () => {};
-  }, [dataAccessibleMenu]);
+  );
 
   /// Listen every change route path name
   useEffect(() => {
     const path = currentPathHandler(pathname);
+
     setCurrentPath(path);
     return () => {};
   }, [pathname]);
@@ -204,15 +219,16 @@ const SiderMenu = (props: {}) => {
         theme="light"
         mode="inline"
         items={items}
-        selectedKeys={[currentPath]}
+        selectedKeys={[currentPath.route]}
+        defaultOpenKeys={[`${currentPath.parentRoute}`]}
         onClick={(e) => {
           /// Jangan lakukan push jika character pertama === "?"
           /// Ini dilakukan untuk meng-akomodir sub menu
           if (e.key[0] === "?") return false;
 
-          const path = currentPathHandler(e.key);
-          setCurrentPath(path);
-          push(path);
+          const { route, parentRoute } = currentPathHandler(e.key);
+          setCurrentPath({ route, parentRoute });
+          push(route);
         }}
       />
       <ProfileLogin />
@@ -224,7 +240,7 @@ const SiderMenu = (props: {}) => {
         danger
         onClick={async (e) => {
           try {
-            destroyCookie(null,keyLocalStorageLogin);
+            destroyCookie(null, keyLocalStorageLogin);
             replace("/login");
             // window.open(`${baseAPIURL}/v1/logout`, "_self");
           } catch (error: any) {

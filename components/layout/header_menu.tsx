@@ -48,7 +48,6 @@ const HeaderMenu = () => {
     headerMenuFetcher,
     {
       onSuccess: (data, key) => {
-
         const mapping = data.map((val, index) => {
           return getItem(
             val.app_modul?.pattern ?? "",

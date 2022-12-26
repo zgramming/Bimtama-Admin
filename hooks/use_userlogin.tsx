@@ -20,7 +20,6 @@ const useUserLogin = () => {
       if (!user) {
         throw new Error("Unauthorized");
       }
-      console.log({ user });
       setUser(user);
     } catch (error: any) {
       notification.error({
