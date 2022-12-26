@@ -1,10 +1,12 @@
 import { Button, Form, Input, notification, Spin } from "antd";
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import { useState } from "react";
+
 import Logo from "../public/images/logo_color.png";
-import { keyLocalStorageLogin } from "../utils/constant";
+import { baseAPIURL, keyLocalStorageLogin } from "../utils/constant";
 
 const LoginPage = () => {
   const [form] = Form.useForm();
@@ -13,17 +15,33 @@ const LoginPage = () => {
   const onFinish = async () => {
     try {
       setIsLoading(true);
-      const values = await form.validateFields();
-      const user = {};
+      const { username, password } = await form.validateFields();
+      const { data: dataResponse, status } = await axios.post(
+        `${baseAPIURL}/login`,
+        {
+          username,
+          password,
+        }
+      );
+      const { data, token, message, success } = dataResponse;
+
+      if (!success) {
+        notification.error({
+          message: "Error occured",
+          description: message,
+        });
+        return;
+      }
+
       /// Save to localstorage
-      localStorage.setItem(keyLocalStorageLogin, JSON.stringify(user));
-      setCookie(null, keyLocalStorageLogin, JSON.stringify(user));
-      replace("/setting/user");
+      setCookie(null, keyLocalStorageLogin, token);
+      replace("/");
     } catch (e: any) {
-      console.log({
-        errorLogin: e,
-      });
-      const { message, code, status } = e?.response?.data || {};
+
+      let message = e?.message;
+      if (axios.isAxiosError(e)) {
+        message = e.message;
+      }
       notification.error({
         duration: 0,
         message: "Error",
