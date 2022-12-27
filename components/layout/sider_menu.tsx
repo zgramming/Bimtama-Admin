@@ -108,9 +108,9 @@ const ProfileLogin = () => {
           padding: 0,
         }}
       >
-        <div className="flex flex-col items-center justify-center p-2 font-bold">
-          <div className="">{user?.name}</div>
-          <div className="font-thin">{user?.email}</div>
+        <div className="flex flex-col items-center justify-center font-semibold gap-3 p-2">
+          <div className="text-center">{user?.name}</div>
+          {/* <div className="font-thin">{user?.email}</div> */}
           <Button
             type="primary"
             icon={<EditOutlined />}
