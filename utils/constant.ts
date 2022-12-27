@@ -12,5 +12,6 @@ export const AVAILABLE_ACCESS_MENU = [
 ];
 
 export const baseAPIURL = process.env.NEXT_PUBLIC_BASEAPIURL;
+export const baseFrontEndURL = process.env.NEXT_PUBLIC_BASEFRONTENDURL;
 
 export const keyLocalStorageLogin = "user_local_storage";

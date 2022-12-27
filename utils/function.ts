@@ -33,4 +33,17 @@ const convertObjectIntoQueryParams = (queryParam: any) => {
   return params;
 };
 
-export { sleep, convertRoutePathToArray, convertObjectIntoQueryParams };
+const stringToSlug = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+export {
+  sleep,
+  convertRoutePathToArray,
+  convertObjectIntoQueryParams,
+  stringToSlug,
+};
