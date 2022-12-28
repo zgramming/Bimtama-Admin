@@ -4,6 +4,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   Modal,
   notification,
   Radio,
@@ -280,6 +281,7 @@ const FormModal = (props: {
       code: props.row?.code,
       name: props.row?.name,
       description: props.row?.description,
+      order: props.row?.order ?? 1,
       status: props.row?.status ?? "active",
       parameter1_key: props.row?.parameter1_key,
       parameter2_key: props.row?.parameter2_key,
@@ -330,6 +332,9 @@ const FormModal = (props: {
           </Form.Item>
           <Form.Item label="Deskripsi" name="description">
             <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item label="Order" name="order">
+            <InputNumber placeholder="Input Order" />
           </Form.Item>
           <Form.Item label="Status" name="status">
             <Radio.Group>

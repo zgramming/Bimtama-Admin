@@ -178,8 +178,10 @@ const Page = () => {
                       <List.Item>
                         <List.Item.Meta
                           avatar={<Avatar>{index + 1}</Avatar>}
-                          title={<div>{item.title}</div>}
-                          description={<div>{item.description}</div>}
+                          title={
+                            <div>{item.master_outline_component?.name}</div>
+                          }
+                          description={<div>{item.title}</div>}
                         />
                       </List.Item>
                     )}

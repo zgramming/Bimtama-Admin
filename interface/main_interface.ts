@@ -133,6 +133,7 @@ export interface MasterData {
   name: string;
   description?: string;
   status: string;
+  order: number;
   parameter1_key?: string;
   parameter1_value?: string;
   parameter2_key?: string;
