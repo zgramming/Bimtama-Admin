@@ -172,6 +172,8 @@ export interface Users {
   username: string;
   password: string;
   status: string;
+  phone?: string;
+  image?: string;
 
   created_at: Date;
   updated_at: Date;
