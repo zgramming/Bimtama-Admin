@@ -122,17 +122,19 @@ const Page = () => {
             </Space>
           </div>
 
-          <Alert
-            message="Informasi"
-            description={
-              <div>
-                Kamu harus memilih outline kamu terlebih dahulu sebelum bisa
-                melakukan bimbingan
-              </div>
-            }
-            type="info"
-            showIcon
-          />
+          {!studentOutline && (
+            <Alert
+              message="Informasi"
+              description={
+                <div>
+                  Kamu harus memilih outline kamu terlebih dahulu sebelum bisa
+                  melakukan bimbingan
+                </div>
+              }
+              type="info"
+              showIcon
+            />
+          )}
 
           <Form
             form={form}

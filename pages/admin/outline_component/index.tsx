@@ -17,13 +17,26 @@ import Search from "antd/lib/input/Search";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { OutlineInterface } from "../../../interface/admin/outline_interface";
-import { convertObjectIntoQueryParams } from "../../../utils/function";
-import { baseAPIURL } from "../../../utils/constant";
 import { MasterData } from "../../../interface/main_interface";
+import { baseAPIURL } from "../../../utils/constant";
+import { convertObjectIntoQueryParams } from "../../../utils/function";
+
+type DataSourceInterface = {
+  no: number;
+  master_outline: OutlineInterface;
+  title: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+  action: OutlineInterface;
+};
+
+const ApiURL = `${baseAPIURL}/admin/outline`;
 
 const outlineFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
@@ -52,17 +65,12 @@ const masterOutlineComponentFetcher = async ([url]: any) => {
   return data as MasterData[];
 };
 
-interface DataSourceInterface {
-  no: number;
-  master_outline: OutlineInterface;
-  title: string;
-  description?: string;
-  created_at: string;
-  updated_at: string;
-  action: OutlineInterface;
-}
-
-const ApiURL = `${baseAPIURL}/admin/outline`;
+const nameInputOutlineComponent = (
+  mstOutlineComponentId: number,
+  index: number
+) => {
+  return `${mstOutlineComponentId}|outline_component_title|${index}`;
+};
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -200,7 +208,8 @@ const Page = () => {
               row={row}
               onCloseModal={(needReload) => {
                 setIsModalOpen(false);
-                if (needReload) reloadUserGroup();
+                /// Force reload
+                if (needReload) reloadUserGroup(undefined, true);
               }}
             />
           )}
@@ -212,6 +221,7 @@ const Page = () => {
 
 type SelectedOutlineComponentType = {
   master_outline_component_id: number;
+  order: number;
 };
 
 const FormModal = (props: {
@@ -225,15 +235,16 @@ const FormModal = (props: {
     Array<SelectedOutlineComponentType>
   >([]);
 
-  const { data: masterOutline, isLoading: isLoadingMasterOutline } = useSWR(
-    [`${baseAPIURL}/setting/master_data/by-category-code/OUTLINE`],
-    masterOutlineFetcher
-  );
+  const { data: masterOutline, isLoading: isLoadingMasterOutline } =
+    useSWRImmutable(
+      [`${baseAPIURL}/setting/master_data/by-category-code/OUTLINE`],
+      masterOutlineFetcher
+    );
 
   const {
     data: masterOutlineComponent,
     isLoading: isLoadingMasterOutlineComponent,
-  } = useSWR(
+  } = useSWRImmutable(
     [`${baseAPIURL}/setting/master_data/by-category-code/OUTLINE_COMPONENT`],
     masterOutlineComponentFetcher
   );
@@ -250,11 +261,14 @@ const FormModal = (props: {
             /// Push array & Fill default title value
             mapping.push({
               master_outline_component_id: val.mst_outline_component_id,
+              order: val.order,
             });
-            form.setFieldValue(
-              `${val.mst_outline_component_id}|outline_component_title`,
-              val.title
+
+            const nameInput = nameInputOutlineComponent(
+              val.mst_outline_component_id,
+              val.order
             );
+            form.setFieldValue(`${nameInput}`, val.title);
           });
 
           return [...mapping];
@@ -280,10 +294,17 @@ const FormModal = (props: {
       const values = await form.validateFields();
       const mappingComponent = selectedOutlineComponent.map((val) => {
         const title =
-          values[`${val.master_outline_component_id}|outline_component_title`];
+          values[
+            nameInputOutlineComponent(
+              val.master_outline_component_id,
+              val.order
+            )
+          ];
+
         return {
           mst_outline_component_id: val.master_outline_component_id,
-          title,
+          title: title,
+          order: val.order,
         };
       });
 
@@ -293,7 +314,6 @@ const FormModal = (props: {
         description: values.description,
         mst_outline_component: mappingComponent,
       };
-      console.log({ data });
 
       if (outlineDetail?.id) {
         const { data: dataResponse, status } = await axios.put(
@@ -385,47 +405,58 @@ const FormModal = (props: {
                   ) == null;
 
                 return (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={
-                        <Checkbox
-                          checked={!disabled}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedOutlineComponent((prevState) => {
-                                return [
-                                  ...prevState,
-                                  { master_outline_component_id: item.id },
-                                ];
-                              });
-                            } else {
-                              /// Reset input text
-                              form.resetFields([
-                                `${item.id}|outline_component_title`,
-                              ]);
-                              setSelectedOutlineComponent((prevState) => {
-                                return [
-                                  ...prevState.filter(
-                                    (val) =>
-                                      val.master_outline_component_id != item.id
-                                  ),
-                                ];
-                              });
-                            }
-                          }}
-                        />
-                      }
-                      title={<div>{item?.name}</div>}
-                      description={
-                        <Form.Item name={`${item.id}|outline_component_title`}>
-                          <Input
-                            placeholder="Contoh : Pendahuluan,Landasan Teori, Analisis Sistem Berjalan, Pembahasan, Penutup"
-                            disabled={disabled}
+                  <>
+                    <List.Item>
+                      <List.Item.Meta
+                        avatar={
+                          <Checkbox
+                            checked={!disabled}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedOutlineComponent((prevState) => {
+                                  return [
+                                    ...prevState,
+                                    {
+                                      master_outline_component_id: item.id,
+                                      order: index,
+                                    },
+                                  ];
+                                });
+                              } else {
+                                /// Reset input text
+                                form.resetFields([
+                                  nameInputOutlineComponent(item.id, index),
+                                ]);
+                                setSelectedOutlineComponent((prevState) => {
+                                  return [
+                                    ...prevState.filter(
+                                      (val) =>
+                                        val.master_outline_component_id !=
+                                        item.id
+                                    ),
+                                  ];
+                                });
+                              }
+                            }}
                           />
-                        </Form.Item>
-                      }
-                    />
-                  </List.Item>
+                        }
+                        title={<div>{item?.name}</div>}
+                        description={
+                          <Form.Item
+                            name={`${nameInputOutlineComponent(
+                              item.id,
+                              index
+                            )}`}
+                          >
+                            <Input
+                              placeholder="Contoh : Pendahuluan,Landasan Teori, Analisis Sistem Berjalan, Pembahasan, Penutup"
+                              disabled={disabled}
+                            />
+                          </Form.Item>
+                        }
+                      />
+                    </List.Item>
+                  </>
                 );
               }}
             />

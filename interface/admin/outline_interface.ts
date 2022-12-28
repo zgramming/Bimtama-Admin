@@ -19,6 +19,7 @@ export interface OutlineComponentInterface {
   outline_id: number;
   mst_outline_component_id: number;
   title: string;
+  order: number;
   description?: string;
   created_at: Date;
   updated_at: Date;
