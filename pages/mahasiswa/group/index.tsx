@@ -20,6 +20,7 @@ import { GroupInterface } from "../../../interface/dosen/group_interface";
 import { baseAPIURL } from "../../../utils/constant";
 
 const { Search } = Input;
+
 const myGroupFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);
   const { data, success }: { data: GroupInterface; success: boolean } =
