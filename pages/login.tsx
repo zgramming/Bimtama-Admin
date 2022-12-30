@@ -23,7 +23,7 @@ const LoginPage = () => {
           password,
         }
       );
-      
+
       const { data, token, message, success } = dataResponse;
 
       if (!success) {
@@ -35,13 +35,15 @@ const LoginPage = () => {
       }
 
       /// Save to localstorage
-      setCookie(null, keyLocalStorageLogin, token);
+      setCookie(null, keyLocalStorageLogin, token, { path: "/" });
       replace("/");
     } catch (e: any) {
       let message = e?.message;
 
       if (axios.isAxiosError(e)) {
-        message = e.message;
+        const dataResponse = e.response?.data;
+        const { success, message: msg } = dataResponse;
+        message = msg;
       }
 
       notification.error({

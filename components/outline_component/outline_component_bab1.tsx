@@ -28,14 +28,15 @@ const OutlineComponentBab1 = () => {
     <>
       <Spin spinning={false}>
         <div className="flex flex-col gap-5">
-          <div className="flex flex-row  justify-end items-center">
+          <div className="flex flex-row justify-end items-center">
             <Button
               icon={<PlusOutlined />}
-              htmlType="submit"
-              form="form_validation"
               className="bg-success text-white"
+              onClick={(e) => {
+                setIsModalOpen(true);
+              }}
             >
-              Ajukan BAB I
+              Pengajuan BAB I
             </Button>
           </div>
           {/* <List
@@ -94,7 +95,7 @@ const FormModal = (props: {
 
   return (
     <Modal
-      title="Form Group User"
+      title="Form Pengajuan BAB 1"
       open={props.open}
       maskClosable={false}
       keyboard={false}

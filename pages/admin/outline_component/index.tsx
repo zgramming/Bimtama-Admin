@@ -67,9 +67,9 @@ const masterOutlineComponentFetcher = async ([url]: any) => {
 
 const nameInputOutlineComponent = (
   mstOutlineComponentId: number,
-  index: number
+  order: number
 ) => {
-  return `${mstOutlineComponentId}|outline_component_title|${index}`;
+  return `${mstOutlineComponentId}|outline_component_title|${order}`;
 };
 
 const Page = () => {
@@ -257,7 +257,7 @@ const FormModal = (props: {
         /// Filling default value input
         setSelectedOutlineComponent((prevState) => {
           const mapping: SelectedOutlineComponentType[] = [];
-          data.outline_component.forEach((val, index) => {
+          data.outline_component.forEach((val) => {
             /// Push array & Fill default title value
             mapping.push({
               master_outline_component_id: val.mst_outline_component_id,
@@ -382,7 +382,7 @@ const FormModal = (props: {
             <Select
               placeholder="Pilih Master Outline"
               options={[
-                ...(masterOutline?.map((val, index) => {
+                ...(masterOutline?.map((val) => {
                   return { value: val.id, label: val.name };
                 }) ?? []),
               ]}
@@ -398,7 +398,7 @@ const FormModal = (props: {
             <List
               itemLayout="horizontal"
               dataSource={masterOutlineComponent}
-              renderItem={(item, index) => {
+              renderItem={(item) => {
                 const disabled =
                   selectedOutlineComponent.find(
                     (val) => val.master_outline_component_id == item.id
@@ -418,14 +418,17 @@ const FormModal = (props: {
                                     ...prevState,
                                     {
                                       master_outline_component_id: item.id,
-                                      order: index,
+                                      order: item.order,
                                     },
                                   ];
                                 });
                               } else {
                                 /// Reset input text
                                 form.resetFields([
-                                  nameInputOutlineComponent(item.id, index),
+                                  nameInputOutlineComponent(
+                                    item.id,
+                                    item.order
+                                  ),
                                 ]);
                                 setSelectedOutlineComponent((prevState) => {
                                   return [
@@ -445,7 +448,7 @@ const FormModal = (props: {
                           <Form.Item
                             name={`${nameInputOutlineComponent(
                               item.id,
-                              index
+                              item.order
                             )}`}
                           >
                             <Input

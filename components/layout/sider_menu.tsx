@@ -240,7 +240,9 @@ const SiderMenu = (props: {}) => {
         danger
         onClick={async (e) => {
           try {
-            destroyCookie({}, keyLocalStorageLogin);
+            destroyCookie({}, keyLocalStorageLogin, {
+              path: "/",
+            });
             replace("/login");
             // window.open(`${baseAPIURL}/v1/logout`, "_self");
           } catch (error: any) {

@@ -75,6 +75,7 @@ const Page = () => {
       const { data, message, success } = dataResponse;
 
       messageApi.success(message);
+      reloadStudentOutline();
     } catch (e: any) {
       let message = e?.message;
       if (axios.isAxiosError(e)) {
@@ -124,14 +125,14 @@ const Page = () => {
 
           {!studentOutline && (
             <Alert
-              message="Informasi"
+              message="Warning"
               description={
                 <div>
                   Kamu harus memilih outline kamu terlebih dahulu sebelum bisa
                   melakukan bimbingan
                 </div>
               }
-              type="info"
+              type="warning"
               showIcon
             />
           )}

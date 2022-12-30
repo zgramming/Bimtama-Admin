@@ -165,7 +165,10 @@ const MasterDataPage = () => {
             <Button
               icon={<PlusOutlined />}
               className="bg-success text-white"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setIsModalOpen(true);
+                setRow(undefined);
+              }}
             >
               Tambah
             </Button>

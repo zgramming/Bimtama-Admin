@@ -9,6 +9,7 @@ import NextNProgress from "nextjs-progressbar";
 import React, { ReactElement, ReactNode } from "react";
 
 import AdminLayout from "../components/layout/layout";
+import { axiosSetHeaderToken } from "../utils/axios_helper";
 import { primaryColor } from "../utils/constant";
 import { convertRoutePathToArray } from "../utils/function";
 
@@ -22,6 +23,8 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  axiosSetHeaderToken();
+
   const router = useRouter();
 
   /// Only get 3 first value from array

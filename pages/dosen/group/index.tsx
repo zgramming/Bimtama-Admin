@@ -110,7 +110,15 @@ const Page = () => {
                     Nama : {`${activeGroup?.name}`}
                   </div>
                   <div className="font-semibold text-lg">
-                    Link : {`${baseFrontEndURL}/l/${activeGroup?.code}`}
+                    Kode :&nbsp;
+                    <a
+                      onClick={(e) => {
+                         navigator.clipboard.writeText(activeGroup.code);
+                        message.info(`Berhasil copy code ke clipcoard`)
+                        }}
+                    >
+                      {`${activeGroup?.code}`}
+                    </a>
                   </div>
                 </div>
               </Card>
@@ -170,6 +178,14 @@ const FormModal = (props: {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    form.setFieldsValue({
+      id: props.row?.id,
+    });
+
+    return () => {};
+  }, [form, props.row]);
+
   const onFinish = async () => {
     try {
       setIsLoading(true);
@@ -203,14 +219,6 @@ const FormModal = (props: {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    form.setFieldsValue({
-      id: props.row?.id,
-    });
-
-    return () => {};
-  }, [form, props.row]);
 
   return (
     <>
