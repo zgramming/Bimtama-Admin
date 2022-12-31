@@ -58,7 +58,7 @@ const Page = () => {
     isLoading: isLoadingActiveGroup,
     mutate: reloadActiveGroup,
   } = useSWR(
-    [`${ApiURL}/active-group/${user?.id}`, queryParam],
+    [`${ApiURL}/my-group/active/${user?.id}`, queryParam],
     activeGroupFetcher
   );
 
@@ -113,9 +113,9 @@ const Page = () => {
                     Kode :&nbsp;
                     <a
                       onClick={(e) => {
-                         navigator.clipboard.writeText(activeGroup.code);
-                        message.info(`Berhasil copy code ke clipcoard`)
-                        }}
+                        navigator.clipboard.writeText(activeGroup.code);
+                        message.info(`Berhasil copy code ke clipcoard`);
+                      }}
                     >
                       {`${activeGroup?.code}`}
                     </a>

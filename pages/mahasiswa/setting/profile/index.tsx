@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Card, Form, Input, message, Space, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -15,7 +6,6 @@ import useSWR from "swr";
 import useUserLogin from "../../../../hooks/use_userlogin";
 import { Users } from "../../../../interface/main_interface";
 import { baseAPIURL } from "../../../../utils/constant";
-import user from "../../../setting/user";
 
 const profileFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);
