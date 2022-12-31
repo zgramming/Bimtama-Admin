@@ -1,4 +1,3 @@
-import { CheckCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 import {
   Alert,
   Avatar,
@@ -14,6 +13,8 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+
+import { CheckCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 
 import useUserLogin from "../../../hooks/use_userlogin";
 import { GroupInterface } from "../../../interface/dosen/group_interface";
@@ -78,6 +79,7 @@ const EmptyGroup = ({
       setIsLoadingJoinGroup(false);
     }
   };
+
   return (
     <>
       <Card>
@@ -190,7 +192,7 @@ const Page = () => {
         )}
         {studentGroup && (
           <Card>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-5">
               <div className="flex flex-row items-center justify-end">
                 <Button
                   type="primary"
@@ -201,6 +203,24 @@ const Page = () => {
                   Keluar Kelompok
                 </Button>
               </div>
+              <Card>
+                <div className="flex flex-col gap-3">
+                  <div className="font-semibold text-lg">
+                    Nama : {`${studentGroup?.name}`}
+                  </div>
+                  <div className="font-semibold text-lg">
+                    Kode :&nbsp;
+                    <a
+                      onClick={(e) => {
+                        navigator.clipboard.writeText(studentGroup.code);
+                        message.info(`Berhasil copy code ke clipcoard`);
+                      }}
+                    >
+                      {`${studentGroup?.code}`}
+                    </a>
+                  </div>
+                </div>
+              </Card>
               <List
                 itemLayout="horizontal"
                 dataSource={studentGroup.group_member}

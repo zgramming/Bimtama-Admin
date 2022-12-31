@@ -23,10 +23,8 @@ import {
   GroupInterface,
   GroupMemberInterface,
 } from "../../../interface/dosen/group_interface";
-import { baseFrontEndURL } from "../../../utils/constant";
 import { stringToSlug } from "../../../utils/function";
 
-const { Search } = Input;
 const activeGroupFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);
   const { data, success }: { data: GroupInterface; success: boolean } =
@@ -64,7 +62,6 @@ const Page = () => {
 
   const {
     data: dataGroupMember,
-    error,
     isLoading,
     mutate: reloadGroupMember,
   } = useSWR(
@@ -94,14 +91,6 @@ const Page = () => {
                   Tambah
                 </Button>
               </Space>
-            </div>
-            <div className="flex flex-wrap items-center space-x-2 mb-5">
-              <Search
-                placeholder="Cari sesuatu..."
-                onSearch={(e) => ""}
-                className="w-48"
-                allowClear
-              />
             </div>
             {activeGroup && (
               <Card>

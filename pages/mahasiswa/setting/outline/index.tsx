@@ -103,7 +103,7 @@ const Page = () => {
   }, [form, studentOutline?.outline_id]);
 
   return (
-    <Spin spinning={isLoading}>
+    <Spin spinning={isLoading || isLoadingStudentOutline}>
       {contextHolder}
       <Card>
         <div className="flex flex-col gap-5">

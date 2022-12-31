@@ -1,6 +1,14 @@
-import { Alert, Button, Card, Empty, message, Spin, Tabs } from "antd";
+import {
+  Alert,
+  Button,
+  Card,
+  Empty,
+  message,
+  notification,
+  Spin,
+  Tabs,
+} from "antd";
 import axios from "axios";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import useSWR from "swr";
 
@@ -40,7 +48,6 @@ const StartGuidanceComponent = ({
 }: {
   onSubmit: (needReload: boolean, message?: string) => void;
 }) => {
-  const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
 
   const user = useUserLogin();
@@ -69,14 +76,13 @@ const StartGuidanceComponent = ({
           : msg;
       }
 
-      messageApi.error(message);
+      notification.error({ message: "Error Occured", description: message });
     } finally {
       setIsLoading(false);
     }
   };
   return (
     <Spin spinning={isLoading}>
-      {contextHolder}
       <div className="flex flex-col gap-5">
         <Alert
           message="Informasi"
@@ -174,7 +180,6 @@ const MyGuidanceOutline = () => {
 
 const Page = () => {
   const user = useUserLogin();
-  const { push, isReady } = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
 
   const {

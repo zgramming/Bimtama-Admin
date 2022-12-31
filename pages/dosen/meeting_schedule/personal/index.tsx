@@ -10,19 +10,22 @@ import {
   notification,
   Radio,
   Row,
+  Select,
   Spin,
 } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { PlusOutlined } from "@ant-design/icons";
 
-import useUserLogin from "../../../../hooks/use_userlogin";
-import { baseAPIURL } from "../../../../utils/constant";
-import { LectureMeetingScheduleInterface } from "../../../../interface/dosen/lecture_meeting_schedule_interface";
-import dayjs from "dayjs";
 import LectureMeetingScheduleItem from "../../../../components/reusable/lecture_meeting_schedule_item_component";
+import useUserLogin from "../../../../hooks/use_userlogin";
+import { GroupMemberInterface } from "../../../../interface/dosen/group_interface";
+import { LectureMeetingScheduleInterface } from "../../../../interface/dosen/lecture_meeting_schedule_interface";
+import { LectureMeetingSchedulePersonalInterface } from "../../../../interface/dosen/lecture_meeting_schedule_personal_interface";
+import { baseAPIURL } from "../../../../utils/constant";
 
 const meetingScheduleFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);
@@ -30,6 +33,23 @@ const meetingScheduleFetcher = async ([url]: any) => {
     data,
     success,
   }: { data: LectureMeetingScheduleInterface[]; success: boolean } =
+    request.data;
+  return data;
+};
+
+const meetingSchedulePersonalFetcher = async ([url]: any) => {
+  const request = await axios.get(`${url}`);
+  const {
+    data,
+    success,
+  }: { data: LectureMeetingSchedulePersonalInterface; success: boolean } =
+    request.data;
+  return data;
+};
+
+const groupMemberFetcher = async ([url]: any) => {
+  const request = await axios.get(`${url}`);
+  const { data, success }: { data: GroupMemberInterface[]; success: boolean } =
     request.data;
   return data;
 };
@@ -46,10 +66,31 @@ const FormModal = (props: {
     props.row?.method ?? "luring"
   );
 
+  const {
+    data: dataGroupMember,
+    isLoading: isLoadingGroupMember,
+    mutate: reloadGroupMember,
+  } = useSWR(
+    [`${baseAPIURL}/dosen/my-group/active/member/${user?.id}`],
+    groupMemberFetcher
+  );
+
+  const {
+    data: dataMeetingPersonal,
+    isLoading: isLoadingMeetingPersonal,
+    mutate: reloadMeetingPersonal,
+  } = useSWR(
+    [
+      `${baseAPIURL}/mahasiswa/meeting-schedule/personal/by-meeting-schedule-id/${props.row?.id}`,
+    ],
+    meetingSchedulePersonalFetcher
+  );
+
   const onFinish = async () => {
     try {
       setIsLoading(true);
       const {
+        student_id,
         title,
         description,
         method,
@@ -62,6 +103,7 @@ const FormModal = (props: {
       const codeType = "personal";
       const body = {
         user_id: user?.id,
+        student_id,
         type: codeType,
         title,
         description,
@@ -75,14 +117,14 @@ const FormModal = (props: {
       let message = undefined;
       if (!props.row?.id) {
         const { data: dataResponse, status } = await axios.post(
-          `${baseAPIURL}/dosen/meeting-schedule`,
+          `${baseAPIURL}/dosen/meeting-schedule/personal`,
           body
         );
         const { message: msg, success, data } = dataResponse;
         message = msg;
       } else {
         const { data: dataResponse, status } = await axios.put(
-          `${baseAPIURL}/dosen/meeting-schedule/${props.row?.id}`,
+          `${baseAPIURL}/dosen/meeting-schedule/personal/${props.row?.id}`,
           body
         );
         const { message: msg, success, data } = dataResponse;
@@ -112,6 +154,7 @@ const FormModal = (props: {
 
   useEffect(() => {
     form.setFieldsValue({
+      student_id: dataMeetingPersonal?.user_id,
       title: props.row?.title,
       description: props.row?.description,
       method: props.row?.method ?? "luring",
@@ -122,11 +165,11 @@ const FormModal = (props: {
     });
 
     return () => {};
-  }, [form, props.row]);
+  }, [dataMeetingPersonal?.user_id, form, props.row]);
 
   return (
     <Modal
-      title="Form Meeting Schedule Group"
+      title="Form Meeting Schedule Personal"
       open={props.open}
       maskClosable={false}
       keyboard={false}
@@ -146,7 +189,7 @@ const FormModal = (props: {
         </Spin>
       }
     >
-      <Spin spinning={isLoading}>
+      <Spin spinning={isLoading || isLoadingGroupMember}>
         <Form
           form={form}
           name="form_validation"
@@ -154,6 +197,20 @@ const FormModal = (props: {
           layout="vertical"
           onFinish={onFinish}
         >
+          <Form.Item
+            label="Anggota"
+            name="student_id"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder="Pilih Anggota Kelompok"
+              options={[
+                ...(dataGroupMember?.map((val) => {
+                  return { value: val.user_id, label: val.user?.name };
+                }) ?? []),
+              ]}
+            ></Select>
+          </Form.Item>
           <Form.Item label="Judul" name="title" rules={[{ required: true }]}>
             <Input name="title" placeholder="Input title" />
           </Form.Item>
@@ -236,13 +293,13 @@ const Page = () => {
     undefined
   );
 
-  const codeGroup = "personal";
+  const codePersonal = "personal";
   const {
     data: dataMeetingSchedule,
     isLoading: isLoadingMeetingSchedule,
     mutate: reloadMeetingSchedule,
   } = useSWR(
-    [`${baseAPIURL}/dosen/meeting-schedule/${user?.id}/type/${codeGroup}`],
+    [`${baseAPIURL}/dosen/meeting-schedule/${user?.id}/type/${codePersonal}`],
     meetingScheduleFetcher
   );
 

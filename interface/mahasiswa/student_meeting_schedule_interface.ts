@@ -14,7 +14,6 @@ export interface StudentMeetingScheduleInterface {
   created_by: null;
   updated_by: null;
   group: Group;
-  meeting_schedule_present: MeetingSchedulePresent[];
 }
 
 interface Group {
@@ -26,16 +25,5 @@ interface Group {
   created_at: Date;
   updated_at: Date;
   created_by: number;
-  updated_by: null;
-}
-
-interface MeetingSchedulePresent {
-  id: string;
-  meeting_schedule_id: number;
-  user_id: number;
-  group_id: number;
-  created_at: Date;
-  updated_at: Date;
-  created_by: null;
   updated_by: null;
 }

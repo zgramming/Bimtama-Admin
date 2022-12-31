@@ -1,8 +1,7 @@
-import { message } from "antd";
 import axios from "axios";
 import useSWR from "swr";
-import StudentMeetingScheduleComponent from "../../../../components/reusable/student_meeting_schedule_component";
 
+import StudentMeetingScheduleComponent from "../../../../components/reusable/student_meeting_schedule_component";
 import useUserLogin from "../../../../hooks/use_userlogin";
 import { StudentMeetingScheduleInterface } from "../../../../interface/mahasiswa/student_meeting_schedule_interface";
 import { baseAPIURL } from "../../../../utils/constant";
@@ -19,17 +18,18 @@ const meetingScheduleFetcher = async ([url]: any) => {
 
 const Page = () => {
   const user = useUserLogin();
-  const [messageApi, contextHolder] = message.useMessage();
 
+  const codePersonal = "personal";
   const { data: dataMeetingSchedule, isLoading: isLoadingMeetingSchedule } =
     useSWR(
-      [`${baseAPIURL}/mahasiswa/meeting-schedule/${user?.id}/type/personal`],
+      [
+        `${baseAPIURL}/mahasiswa/meeting-schedule/${user?.id}/type/${codePersonal}`,
+      ],
       meetingScheduleFetcher
     );
 
   return (
     <>
-      {contextHolder}
       <StudentMeetingScheduleComponent items={dataMeetingSchedule ?? []} />
     </>
   );
