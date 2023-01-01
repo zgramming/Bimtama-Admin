@@ -1,7 +1,7 @@
 import axios from "axios";
 import useSWR from "swr";
 
-import StudentMeetingScheduleComponent from "../../../../components/reusable/student_meeting_schedule_component";
+import StudentMeetingScheduleComponent from "../../../../components/student/student_meeting_schedule_component";
 import useUserLogin from "../../../../hooks/use_userlogin";
 import { StudentMeetingScheduleInterface } from "../../../../interface/mahasiswa/student_meeting_schedule_interface";
 import { baseAPIURL } from "../../../../utils/constant";

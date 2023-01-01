@@ -15,11 +15,7 @@ import { destroyCookie, setCookie } from "nookies";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
-import {
-  EditOutlined,
-  LogoutOutlined,
-  PieChartOutlined,
-} from "@ant-design/icons";
+import { LogoutOutlined, PieChartOutlined } from "@ant-design/icons";
 
 import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
@@ -109,13 +105,12 @@ const ProfileLogin = () => {
         }}
       >
         <div className="flex flex-col items-center justify-center font-semibold gap-3 p-2">
-          <div className="text-center">{user?.name}</div>
-          {/* <div className="font-thin">{user?.email}</div> */}
-          <Button
+          <h1 className="text-center">{user?.name}</h1>
+          {/* <Button
             type="primary"
             icon={<EditOutlined />}
             onClick={(e) => setIsModalOpen(true)}
-          />
+          /> */}
         </div>
       </Card>
       {isModalOpen && (

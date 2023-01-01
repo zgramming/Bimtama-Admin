@@ -14,15 +14,11 @@ import useSWR from "swr";
 
 import { StarTwoTone } from "@ant-design/icons";
 
-import OutlineComponentBab1 from "../../../components/outline_component/outline_component_bab1";
-import OutlineComponentBab2 from "../../../components/outline_component/outline_component_bab2";
-import OutlineComponentBab3 from "../../../components/outline_component/outline_component_bab3";
-import OutlineComponentBab4 from "../../../components/outline_component/outline_component_bab4";
-import OutlineComponentBab5 from "../../../components/outline_component/outline_component_bab5";
-import OutlineComponentJudul from "../../../components/outline_component/outline_component_judul";
+import StudentGuidanceItemComponent from "../../../components/student/student_guidance_item_component";
 import useUserLogin from "../../../hooks/use_userlogin";
 import { StudentGuidanceInterface } from "../../../interface/mahasiswa/student_guidance";
 import { StudentGuidanceOutlineInterface } from "../../../interface/mahasiswa/student_guidance_outline";
+import { StudentGuidanceProgressInterface } from "../../../interface/mahasiswa/student_guidance_progress_interface";
 import { baseAPIURL } from "../../../utils/constant";
 
 const myGuidanceFetcher = async ([url]: any) => {
@@ -40,6 +36,16 @@ const guidanceOutlineFetcher = async ([url]: any) => {
     data,
     success,
   }: { data: StudentGuidanceOutlineInterface; success: boolean } = request.data;
+  return data;
+};
+
+const progressGuidanceFetcher = async ([url]: any) => {
+  const request = await axios.get(`${url}`);
+  const {
+    data,
+    success,
+  }: { data: StudentGuidanceProgressInterface[]; success: boolean } =
+    request.data;
   return data;
 };
 
@@ -85,9 +91,9 @@ const StartGuidanceComponent = ({
     <Spin spinning={isLoading}>
       <div className="flex flex-col gap-5">
         <Alert
-          message="Informasi"
-          description="Sebelum melakukan bimbingan, silahkan tekan tombol mulai"
-          type="info"
+          message="Warning"
+          description="Setelah kamu memulai bimbingan, kamu tidak diperbolehkan untuk mengubah outline. Pastikan kamu sudah memilih outline yang benar sebelum memulai bimbingan."
+          type="warning"
           showIcon
         />
         <div className="flex flex-row justify-center items-center">
@@ -122,23 +128,33 @@ const MyGuidanceOutline = () => {
     }
   );
 
+  const {
+    data: progressGuidance,
+    isLoading: isLoadingprogressGuidance,
+    mutate: reloadprogressGuidance,
+  } = useSWR(
+    [`${baseAPIURL}/mahasiswa/guidance/progress/${user?.id}`],
+    progressGuidanceFetcher
+  );
+
+  const listIDMasterOutlineComponent =
+    progressGuidance?.map((val) => val.mst_outline_component_id) ?? [];
+
   const onChangeTab = (key: string) => {};
 
   const chooseOutline = (codeOutlineComponent: string) => {
     switch (codeOutlineComponent) {
       case `OUTLINE_COMPONENT_JUDUL`:
-        return <OutlineComponentJudul />;
       case `OUTLINE_COMPONENT_BAB1`:
-        return <OutlineComponentBab1 />;
       case `OUTLINE_COMPONENT_BAB2`:
-        return <OutlineComponentBab2 />;
       case `OUTLINE_COMPONENT_BAB3`:
-        return <OutlineComponentBab3 />;
       case `OUTLINE_COMPONENT_BAB4`:
-        return <OutlineComponentBab4 />;
       case `OUTLINE_COMPONENT_BAB5`:
-        return <OutlineComponentBab5 />;
-
+        return (
+          <StudentGuidanceItemComponent
+            codeMasterOutlineComponent={codeOutlineComponent}
+          />
+        );
       default:
         return <Empty />;
     }
@@ -166,8 +182,12 @@ const MyGuidanceOutline = () => {
           onChange={onChangeTab}
           items={guidanceOutline?.outline?.outline_component?.map((val, i) => {
             const label = `${val.master_outline_component?.name} - ${val.title}`;
+            const disabled = !listIDMasterOutlineComponent.includes(
+              val.mst_outline_component_id
+            );
             return {
               key: val.master_outline_component?.code ?? "",
+              disabled: disabled,
               label: <div>{label}</div>,
               children: chooseOutline(val.master_outline_component?.code ?? ""),
             };

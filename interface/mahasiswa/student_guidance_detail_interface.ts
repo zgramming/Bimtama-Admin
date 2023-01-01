@@ -8,5 +8,6 @@ export interface StudentGuidanceDetailInterface {
   description?: string;
   lecture_note?: string;
   status: "progress" | "rejected" | "approved";
-  file: null;
+  file?: string;
+  file_lecture?: string;
 }

@@ -52,6 +52,11 @@ const Page = () => {
                   <List.Item.Meta
                     avatar={<Avatar>{index + 1}</Avatar>}
                     title={<a href="https://ant.design">{item.user.name}</a>}
+                    description={
+                      <div className="flex flex-col">
+                        <div>{item.user.phone}</div>
+                      </div>
+                    }
                   />
                 </List.Item>
               )}

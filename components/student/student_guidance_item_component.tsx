@@ -9,6 +9,7 @@ import {
   Space,
   Spin,
   Tag,
+  Upload,
 } from "antd";
 import axios from "axios";
 import { saveAs } from "file-saver";
@@ -22,20 +23,13 @@ import {
   EyeOutlined,
   PlusOutlined,
   SyncOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 
 import useUserLogin from "../../hooks/use_userlogin";
 import { StudentGuidanceDetailInterface } from "../../interface/mahasiswa/student_guidance_detail_interface";
 import { baseAPIURL, baseFileDirectoryURL } from "../../utils/constant";
-
-type PageContextType = {
-  reloadGuidanceDetail: any;
-};
-const defaultContextValue: PageContextType = {
-  reloadGuidanceDetail: undefined,
-};
-const PageContext = createContext<PageContextType>(defaultContextValue);
-const PageProvider = PageContext.Provider;
+import { MasterData } from "../../interface/main_interface";
 
 const guidanceTitleFetcher = async ([url, params]: any) => {
   const request = await axios.get(`${url}`);
@@ -43,6 +37,13 @@ const guidanceTitleFetcher = async ([url, params]: any) => {
     data,
     success,
   }: { data: StudentGuidanceDetailInterface[]; success: boolean } =
+    request.data;
+  return data;
+};
+
+const masterDataByCodeFetcher = async ([url]: any) => {
+  const request = await axios.get(`${url}`);
+  const { data, success }: { data: MasterData; success: boolean } =
     request.data;
   return data;
 };
@@ -73,27 +74,38 @@ const GuidanceStatusComponent = ({ status }: { status: string }) => {
 };
 
 const FormModal = (props: {
+  codeMasterOutlineComponent: string;
   open: boolean;
-  row?: StudentGuidanceDetailInterface;
   onCloseModal: (needReload?: boolean, message?: string) => void;
 }) => {
   const user = useUserLogin();
-  const ctx = useContext(PageContext);
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
   const onFinish = async () => {
     try {
       setIsLoading(true);
-      const { title, description } = await form.validateFields();
+      const formData = new FormData();
+
+      const { title, description, file } = await form.validateFields();
+      formData.set(`title`, title);
+      formData.set(`description`, description);
+      formData.set(`user_id`, `${user?.id}`);
+      formData.set(
+        `code_master_outline_component`,
+        props.codeMasterOutlineComponent
+      );
+      if (file?.file) {
+        formData.set(`file`, file.file);
+      }
+
       const body = { title, description, user_id: user?.id };
       const { data: dataResponse, status } = await axios.post(
-        `${baseAPIURL}/mahasiswa/guidance/submission/proposal-title`,
-        body
+        `${baseAPIURL}/mahasiswa/guidance/submission`,
+        formData
       );
       const { data, message, success } = dataResponse;
 
-      ctx.reloadGuidanceDetail();
       props.onCloseModal(true, message);
     } catch (e: any) {
       let message = e?.message;
@@ -109,12 +121,6 @@ const FormModal = (props: {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    form.setFieldsValue({});
-
-    return () => {};
-  }, [form, props.row]);
 
   return (
     <Modal
@@ -155,6 +161,11 @@ const FormModal = (props: {
               placeholder="Input description"
             />
           </Form.Item>
+          <Form.Item label="File Pendukung" name="file" help={"Optional"}>
+            <Upload beforeUpload={(file, filelist) => false} maxCount={1}>
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       </Spin>
     </Modal>
@@ -190,14 +201,14 @@ const OutlineComponentItem = ({
                       Lihat Catatan
                     </Button>
                   )}
-                  {guidance.file && (
+                  {guidance.file_lecture && (
                     <Button
                       icon={<DownloadOutlined />}
                       onClick={(e) => {
                         try {
                           saveAs(
-                            `${baseFileDirectoryURL}/${guidance.file}`,
-                            `${guidance.file}`
+                            `${baseFileDirectoryURL}/${guidance.file_lecture}`,
+                            `${guidance.file_lecture}`
                           );
                           notification.success({
                             message: "Berhasil download file",
@@ -235,7 +246,11 @@ const OutlineComponentItem = ({
   );
 };
 
-const OutlineComponentJudul = () => {
+const StudentGuidanceItemComponent = ({
+  codeMasterOutlineComponent,
+}: {
+  codeMasterOutlineComponent: string;
+}) => {
   const user = useUserLogin();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -245,14 +260,23 @@ const OutlineComponentJudul = () => {
     mutate: reloadGuidanceDetail,
   } = useSWR(
     [
-      `${baseAPIURL}/mahasiswa/guidance/detail/${user?.id}/code/OUTLINE_COMPONENT_JUDUL`,
+      `${baseAPIURL}/mahasiswa/guidance/detail/${user?.id}/code/${codeMasterOutlineComponent}`,
     ],
     guidanceTitleFetcher
   );
 
+  const {
+    data: dataMasterData,
+    isLoading: isLoadingMasterData,
+    mutate: reloadMasterData,
+  } = useSWR(
+    [`${baseAPIURL}/setting/master_data/by-code/${codeMasterOutlineComponent}`],
+    masterDataByCodeFetcher
+  );
+
   return (
-    <PageProvider value={{ reloadGuidanceDetail: reloadGuidanceDetail }}>
-      <Spin spinning={isLoadingGuidanceDetail}>
+    <>
+      <Spin spinning={isLoadingGuidanceDetail || isLoadingMasterData}>
         <div className="flex flex-col">
           <div className="flex flex-row justify-end items-center">
             <Button
@@ -262,7 +286,7 @@ const OutlineComponentJudul = () => {
                 setIsModalOpen(true);
               }}
             >
-              Pengajuan Judul
+              Pengajuan {dataMasterData?.name}
             </Button>
           </div>
           <List
@@ -281,7 +305,7 @@ const OutlineComponentJudul = () => {
       {isModalOpen && (
         <FormModal
           open={isModalOpen}
-          row={undefined}
+          codeMasterOutlineComponent={dataMasterData?.code ?? ""}
           onCloseModal={(needReload, message) => {
             setIsModalOpen(false);
             if (needReload) {
@@ -289,12 +313,13 @@ const OutlineComponentJudul = () => {
                 message: "Success",
                 description: message,
               });
+              reloadGuidanceDetail(undefined, true);
             }
           }}
         />
       )}
-    </PageProvider>
+    </>
   );
 };
 
-export default OutlineComponentJudul;
+export default StudentGuidanceItemComponent;

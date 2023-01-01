@@ -1,3 +1,5 @@
+import { Users } from "../main_interface";
+
 export interface StudentMentorInterface {
   id: number;
   name: string;
@@ -21,19 +23,5 @@ interface GroupMember {
   updated_at: Date;
   created_by: null;
   updated_by: null;
-  user: User;
-}
-
-interface User {
-  id: number;
-  app_group_user_id: number;
-  name: string;
-  email: string;
-  username: string;
-  password: string;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-  created_by: null;
-  updated_by: null;
+  user: Users;
 }

@@ -1,5 +1,7 @@
-import { CheckCircleOutlined, CalendarOutlined } from "@ant-design/icons";
-import { Card, List, Avatar, Space, Tag } from "antd";
+import { Avatar, Card, List, Space, Tag } from "antd";
+
+import { CalendarOutlined, CheckCircleOutlined } from "@ant-design/icons";
+
 import { StudentMeetingScheduleInterface } from "../../interface/mahasiswa/student_meeting_schedule_interface";
 
 const StudentMeetingScheduleComponent = ({

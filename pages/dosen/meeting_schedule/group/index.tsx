@@ -13,16 +13,16 @@ import {
   Spin,
 } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { PlusOutlined } from "@ant-design/icons";
 
+import LectureMeetingScheduleItem from "../../../../components/lecture/lecture_meeting_schedule_item_component";
 import useUserLogin from "../../../../hooks/use_userlogin";
-import { baseAPIURL } from "../../../../utils/constant";
 import { LectureMeetingScheduleInterface } from "../../../../interface/dosen/lecture_meeting_schedule_interface";
-import dayjs from "dayjs";
-import LectureMeetingScheduleItem from "../../../../components/reusable/lecture_meeting_schedule_item_component";
+import { baseAPIURL } from "../../../../utils/constant";
 
 const meetingScheduleFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);

@@ -20,7 +20,7 @@ import useSWR from "swr";
 
 import { PlusOutlined } from "@ant-design/icons";
 
-import LectureMeetingScheduleItem from "../../../../components/reusable/lecture_meeting_schedule_item_component";
+import LectureMeetingScheduleItem from "../../../../components/lecture/lecture_meeting_schedule_item_component";
 import useUserLogin from "../../../../hooks/use_userlogin";
 import { GroupMemberInterface } from "../../../../interface/dosen/group_interface";
 import { LectureMeetingScheduleInterface } from "../../../../interface/dosen/lecture_meeting_schedule_interface";
