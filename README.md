@@ -90,7 +90,7 @@ A. D3 Sistem Informasi - Perancangan Program Bisnis (Observasi)
 
 ### Point Of View Mahasiswa
 
-#### Kelompok
+### 1.Kelompok
 
 ![](demo/mahasiswa/1.gif)
 
@@ -98,13 +98,13 @@ In this menu, students can search for guidance groups by typing the guidance gro
 
 Students can only enter into one guidance group only.
 
-#### Jadwal Pertemuan Kelompok / Personal
+### 2.Jadwal Pertemuan Kelompok / Personal
 
 ![](demo/mahasiswa/2.gif)
 
 In this menu, students can see an announcement when the guidance will be carried out. In addition to group meetings, students can also see personal meeting announcements if the lecturer personally wants to have a private meeting.
 
-#### Bimbingan
+### 3.Bimbingan
 
 ![](demo/mahasiswa/6.gif)
 
@@ -131,13 +131,13 @@ The student outline component is currently under examination by the lecturer
 Students cannot submit multiple submissions if the previous outline component is still in the review process or has been approved by the lecturer
 
 
-#### Pembimbing
+### 4.Pembimbing
 
 ![](demo/mahasiswa/3.png)
 
 Students can view their lecturer's information
 
-#### Setting - Outline
+### 5.Setting - Outline
 
 ![](demo/mahasiswa/4.gif)
 
@@ -145,7 +145,7 @@ In this menu, students are required to choose an outline of their guidance, stud
 
 However, students cannot change the outline if they are currently under guidance.
 
-#### Setting - Profile
+### 6.Setting - Profile
 
 ![](demo/mahasiswa/5.png)
 
@@ -153,7 +153,7 @@ Menu to update student profiles
 
 ### Point Of View Dosen
 
-#### Kelompok
+### 1.Kelompok
 
 ![](demo/dosen/1.gif)
 
@@ -163,13 +163,13 @@ Lecturers can create groups many times, but there is a rule that the last group 
 
 To change the active guidance group, you can go through the **Setting > Kelompok Saya**
 
-#### Jadwal Pertemuan Kelompok / Personal
+### 2.Jadwal Pertemuan Kelompok / Personal
 
 ![](demo/dosen/2.gif)
 
 In this menu, lecturers can schedule meetings for their guided students. Besides being able to schedule meetings for all the students under his guidance, he can also schedule individual meetings.
 
-#### Bimbingan
+### 3.Bimbingan
 
 ![](demo/dosen/3.gif)
 
@@ -188,13 +188,13 @@ Declare the student's submission is not appropriate. Lecturers can provide notes
 Still in the inspection process
 
 
-#### Setting - Profile
+### 4.Setting - Profile
 
 ![](demo/dosen/4.png)
 
 Menu for updating lecturer profiles.
 
-#### Setting - Kelompok Saya
+### 5.Setting - Kelompok Saya
 
 ![](demo/dosen/5.png)
 
