@@ -1,11 +1,12 @@
 import { Button, Card, Form, Input, message, Space, Spin } from "antd";
 import axios from "axios";
+import { setCookie } from "nookies";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import useUserLogin from "../../../../hooks/use_userlogin";
 import { Users } from "../../../../interface/main_interface";
-import { baseAPIURL } from "../../../../utils/constant";
+import { baseAPIURL, keyLocalStorageLogin } from "../../../../utils/constant";
 
 const profileFetcher = async ([url]: any) => {
   const request = await axios.get(`${url}`);
@@ -40,7 +41,9 @@ const Page = () => {
         body
       );
 
-      const { data, message, success } = dataResponse;
+      const { data, message, success, token } = dataResponse;
+      setCookie(null, keyLocalStorageLogin, token, { path: "/" });
+
       reloadProfile();
       messageApi.success(message);
     } catch (e: any) {
@@ -69,7 +72,7 @@ const Page = () => {
   }, [form, profile]);
 
   return (
-    <Spin spinning={isLoadingProfile}>
+    <Spin spinning={isLoadingProfile || isLoading}>
       {contextHolder}
       <Card>
         <div className="flex flex-col gap-5">

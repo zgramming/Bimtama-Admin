@@ -371,9 +371,6 @@ const FormModal = (props: {
           layout="vertical"
           onFinish={onFinish}
         >
-          <Form.Item label="ID" name="id" className="hidden">
-            <Input name="id" placeholder="ID" />
-          </Form.Item>
           <Form.Item
             label="Outline"
             name="mst_outline_id"

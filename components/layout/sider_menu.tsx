@@ -80,7 +80,7 @@ const ProfileLogin = () => {
         success,
         token,
       }: { data: Users; message: string; success: true; token: string } = data;
-      setCookie(null, keyLocalStorageLogin, token);
+      setCookie(null, keyLocalStorageLogin, token, { path: "/" });
       notification.success({
         message: "Success Update",
         description: message,

@@ -12,8 +12,9 @@ import {
   Upload,
 } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
 import { saveAs } from "file-saver";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 
 import {
@@ -28,16 +29,18 @@ import {
 
 import useUserLogin from "../../hooks/use_userlogin";
 import { StudentGuidanceDetailInterface } from "../../interface/mahasiswa/student_guidance_detail_interface";
-import { baseAPIURL, baseFileDirectoryURL } from "../../utils/constant";
 import { MasterData } from "../../interface/main_interface";
+import { baseAPIURL, baseFileDirectoryURL } from "../../utils/constant";
 
 const guidanceTitleFetcher = async ([url, params]: any) => {
   const request = await axios.get(`${url}`);
+
   const {
     data,
     success,
   }: { data: StudentGuidanceDetailInterface[]; success: boolean } =
     request.data;
+
   return data;
 };
 
@@ -189,16 +192,45 @@ const OutlineComponentItem = ({
           title={<div>{guidance.title}</div>}
           description={
             <div className="flex flex-row items-center justify-between">
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-3">
                 <div>{guidance.description}</div>
+                <div className="">
+                  Created At :{" "}
+                  <b>
+                    {dayjs(guidance.created_at).format(`DD MMMM YYYY HH:mm`)}
+                  </b>
+                </div>
                 <Space direction="horizontal" size={10} wrap>
+                  {guidance.file && (
+                    <Button
+                      icon={<DownloadOutlined />}
+                      type="default"
+                      onClick={(e) => {
+                        try {
+                          saveAs(
+                            `${baseFileDirectoryURL}/${guidance.file}`,
+                            `${guidance.file}`
+                          );
+                          notification.success({
+                            message: "Berhasil download file",
+                          });
+                        } catch (error) {
+                          notification.error({
+                            message: "Error occured on download file",
+                          });
+                        }
+                      }}
+                    >
+                      File Saya
+                    </Button>
+                  )}
                   {guidance.lecture_note && (
                     <Button
                       icon={<EyeOutlined />}
                       type="primary"
                       onClick={(e) => setIsShowModalDetail(true)}
                     >
-                      Lihat Catatan
+                      Catatan Dosen
                     </Button>
                   )}
                   {guidance.file_lecture && (
@@ -220,7 +252,7 @@ const OutlineComponentItem = ({
                         }
                       }}
                     >
-                      Download File
+                      File Dosen
                     </Button>
                   )}
                 </Space>

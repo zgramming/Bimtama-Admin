@@ -16,9 +16,9 @@ import {
   Upload,
 } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
 import { saveAs } from "file-saver";
+import { useContext, useEffect, useState } from "react";
+import useSWR from "swr";
 
 import {
   CheckCircleOutlined,
@@ -30,6 +30,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 
+import { LectureGuidanceContext } from "../../context/lecture_guidance_context";
 import useUserLogin from "../../hooks/use_userlogin";
 import { LectureGuidanceDetailInterface } from "../../interface/dosen/lecture_guidance_detail_interface";
 import { MasterData } from "../../interface/main_interface";
@@ -126,7 +127,11 @@ const FormModal = (props: {
 
   return (
     <Modal
-      title={`Form Bimbingan ${props.title}`}
+      title={
+        <div>
+          Form Bimbingan {props.title} {props.row?.user.name}
+        </div>
+      }
       open={props.open}
       maskClosable={false}
       keyboard={false}
@@ -201,6 +206,8 @@ const LectureGuidanceTableComponent = ({
   codeMasterOutlineComponent: string;
 }) => {
   const user = useUserLogin();
+  const context = useContext(LectureGuidanceContext);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [row, setRow] = useState<LectureGuidanceDetailInterface | undefined>(
     undefined
@@ -370,17 +377,6 @@ const LectureGuidanceTableComponent = ({
             <Select.Option value="rejected">Rejected</Select.Option>
           </Select>
         </div>
-        <Alert
-          message="Informasi"
-          description={
-            <div>
-              Hanya bimbingan dengan status <b>Progress</b> yang dapat di edit
-            </div>
-          }
-          type="info"
-          showIcon
-          closable
-        />
         <Table
           columns={columns}
           dataSource={dataSource}
@@ -405,6 +401,7 @@ const LectureGuidanceTableComponent = ({
               setIsModalOpen(false);
               if (needReload) {
                 reloadGuidanceDetail();
+                context.reloadMasterOutlineComponent(undefined, true);
                 notification.success({
                   message: "Success",
                   description: message,

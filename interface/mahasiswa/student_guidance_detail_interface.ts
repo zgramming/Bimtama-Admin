@@ -10,4 +10,9 @@ export interface StudentGuidanceDetailInterface {
   status: "progress" | "rejected" | "approved";
   file?: string;
   file_lecture?: string;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by?: number;
+  updated_by?: number;
 }
