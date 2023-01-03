@@ -204,6 +204,12 @@ Menu to change the active group of lecturers. Changes to this group will affect 
 - Schedule of Group & Personal Meetings
 - Guidance
 
+## Roadmap
+
+- [ ] Notification by Email
+- [ ] Mobile Application
+- [ ] Landing Page
+
 ## Related
 
 Here are some related projects
