@@ -13,6 +13,11 @@ const excludePathCheckingToken = (path: string) => {
 export function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl.pathname;
   const accessToken = request.cookies.get(keyLocalStorageLogin);
+
+  if (accessToken !== undefined && url.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   /// Check apakah url sekarang termaksud kedalam url yang tidak diikut sertakan pengecekan token
   if (excludePathCheckingToken(url)) {
     return NextResponse.next();
