@@ -33,8 +33,8 @@ const useUserLogin = () => {
       destroyCookie({}, keyLocalStorageLogin, {
         path: "/",
       });
-      
-      replace("/login")
+
+      replace("/login");
     }
     return () => {};
   }, [replace]);

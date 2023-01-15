@@ -207,7 +207,7 @@ Menu to change the active group of lecturers. Changes to this group will affect 
 ## Roadmap
 
 - [ ] Notification by Email
-- [ ] Mobile Application
+- [x] Mobile Application
 - [ ] Landing Page
 
 ## Related

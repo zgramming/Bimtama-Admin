@@ -77,6 +77,7 @@ const GuidanceStatusComponent = ({ status }: { status: string }) => {
 };
 
 const FormModal = (props: {
+  title: string;
   codeMasterOutlineComponent: string;
   open: boolean;
   onCloseModal: (needReload?: boolean, message?: string) => void;
@@ -91,6 +92,7 @@ const FormModal = (props: {
       const formData = new FormData();
 
       const { title, description, file } = await form.validateFields();
+
       formData.set(`title`, title);
       formData.set(`description`, description);
       formData.set(`user_id`, `${user?.id}`);
@@ -127,7 +129,7 @@ const FormModal = (props: {
 
   return (
     <Modal
-      title="Form Pengajuan Judul"
+      title={`Form ${props.title}`}
       open={props.open}
       maskClosable={false}
       keyboard={false}
@@ -337,6 +339,7 @@ const StudentGuidanceItemComponent = ({
       {isModalOpen && (
         <FormModal
           open={isModalOpen}
+          title={dataMasterData?.name ?? ""}
           codeMasterOutlineComponent={dataMasterData?.code ?? ""}
           onCloseModal={(needReload, message) => {
             setIsModalOpen(false);
